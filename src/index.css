@@ -1,0 +1,50 @@
+:root {
+  --color-bg-base: #0a0a0a;
+  --color-bg-surface: #121212;
+  --color-bg-secondary: #1a1a1a;
+  --color-primary: #00FFFF;
+  --color-primary-dim: #00cccc;
+  --color-text-main: #ffffff;
+  --color-text-muted: #a0a0a0;
+  --color-border: #333333;
+
+  --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --transition-speed: 0.3s;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--color-bg-base);
+  color: var(--color-text-main);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-speed);
+}
+
+a:hover {
+  text-decoration: underline;
+  text-shadow: 0 0 8px var(--color-primary);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}

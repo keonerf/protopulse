@@ -1,152 +1,140 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef } from 'react';
+import { motion, useTransform, useScroll } from 'framer-motion';
+
+const steps = [
+    {
+        id: 1,
+        title: "Isolation Milling",
+        desc: "High-speed spindle carves excessive copper, isolating traces with 0.2mm precision. No chemicals, just physics.",
+        stat: "0.2mm Precision"
+    },
+    {
+        id: 2,
+        title: "Solder Stenciling",
+        desc: "Automated paste application ensures perfect volume for every pad. Eliminates bridging and dry joints.",
+        stat: "Automated Paste"
+    },
+    {
+        id: 3,
+        title: "Pick & Place",
+        desc: "Computer vision aligns components with 0.05mm accuracy. From 0402 passives to BGA packages.",
+        stat: "0.05mm Accuracy"
+    },
+    {
+        id: 4,
+        title: "Reflow Soldering",
+        desc: "Precision thermal profiling activates flux and creates intermetallic bonds. Factory-grade reliability on your desktop.",
+        stat: "Thermal Profile"
+    }
+];
 
 const AssemblyLine = () => {
-    const steps = [
-        {
-            title: "Isolation Milling",
-            desc: "High-precision CNC milling achieving 0.2mm trace accuracy. No hazardous chemicals; just high-speed, office-safe isolation carving.",
-            stats: "0.2mm accuracy",
-            color: "#00FFFF" // Electric Cyan
-        },
-        {
-            title: "Solder Stenciling",
-            desc: "Integrated stenciling process using a 0.1mm V-bit at 8000 RPM. Creates perfect pads ready for component placement.",
-            stats: "8000 RPM",
-            color: "#FF00FF" // Magenta for contrast
-        },
-        {
-            title: "Robotic Placement",
-            desc: "A robotic manipulator using custom-generated 3D-printed molds to accurately position components ranging from 0402 chips to larger QFPs.",
-            stats: "0402 to QFPs",
-            color: "#FFFF00" // Yellow
-        },
-        {
-            title: "PID Reflow",
-            desc: "A PID-controlled thermal profile that peaks at 220°C for perfect solder joints every time.",
-            stats: "220°C Peak",
-            color: "#FF3333" // Red
-        }
-    ];
-
-    const [activeStep, setActiveStep] = useState(0);
-
-    // Simple scroll simulation logic could be implemented with IntersectionObserver
-    // For now, we'll make it interactive on hover/click or a self-playing cycle to "wow" the user
-    // A vertical timeline is requested. Let's do a sticky side-by-side layout.
-
-    const sectionStyle = {
-        padding: '6rem 2rem',
-        background: 'var(--color-bg-base)',
-        color: '#fff',
-    };
-
-    const containerStyle = {
-        maxWidth: '1200px',
-        margin: '0 auto',
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: '4rem',
-        alignItems: 'start',
-    };
-
-    const headerStyle = {
-        fontSize: '3rem',
-        fontWeight: '900',
-        marginBottom: '4rem',
-        textAlign: 'center',
-        gridColumn: '1 / -1',
-        textTransform: 'uppercase',
-    };
-
-    const stepListStyle = {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '2rem',
-    };
-
-    const stepItemStyle = (isActive, color) => ({
-        padding: '2rem',
-        borderLeft: `4px solid ${isActive ? color : '#333'}`,
-        background: isActive ? 'linear-gradient(90deg, rgba(255,255,255,0.05), transparent)' : 'transparent',
-        transition: 'all 0.3s ease',
-        cursor: 'pointer',
-        opacity: isActive ? 1 : 0.5,
+    const targetRef = useRef(null);
+    const { scrollYProgress } = useScroll({
+        target: targetRef,
+        offset: ["start start", "end end"]
     });
 
-    const displayWindowStyle = {
-        position: 'sticky',
-        top: '100px',
-        height: '400px',
-        background: '#1a1a1a',
-        borderRadius: '12px',
-        border: '1px solid var(--color-border)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
-        boxShadow: activeStep >= 0 ? `0 0 50px ${steps[activeStep].color}20` : 'none',
-        transition: 'box-shadow 0.5s ease',
-    };
-
     return (
-        <section style={sectionStyle} id="process">
-            <div style={containerStyle}>
-                <h2 style={headerStyle}>The Assembly Line</h2>
+        <section ref={targetRef} style={{ height: '220vh', position: 'relative' }} id="product">
+            <div style={{
+                position: 'sticky',
+                top: 0,
+                height: '100vh',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                overflow: 'hidden',
+                background: 'var(--color-bg-surface)'
+            }}>
+                {steps.map((step, i) => {
+                    // Logic: i=0 should be visible quickly
+                    const rangeStep = 1 / steps.length;
+                    const start = i * rangeStep;
+                    const end = (i + 1) * rangeStep;
 
-                <div style={stepListStyle}>
-                    {steps.map((step, index) => (
-                        <div
-                            key={index}
-                            style={stepItemStyle(activeStep === index, step.color)}
-                            onMouseEnter={() => setActiveStep(index)}
+                    // Special case for last item: Don't fade out at "end". Stay visible.
+                    const isLast = i === steps.length - 1;
+
+                    // Input: [start, middle, end]
+                    // We want it to be visible during most of its "slot"
+                    const opacity = useTransform(scrollYProgress,
+                        [start, start + (rangeStep * 0.2), end - (rangeStep * 0.2), end],
+                        isLast ? [0, 1, 1, 1] : [0, 1, 1, 0] // LAST ITEM STAYS VISIBLE
+                    );
+
+                    // Special case for first item: stay visible if scroll is near 0
+                    const isFirst = i === 0;
+
+                    // For motion effect
+                    const scale = useTransform(scrollYProgress, [start, end], [0.95, 1.05]);
+
+                    return (
+                        <motion.div
+                            key={step.id}
+                            style={{
+                                opacity: isFirst ? useTransform(scrollYProgress, [0, rangeStep], [1, 0]) : opacity, // First item visible immediately
+                                position: 'absolute',
+                                width: '100%',
+                                textAlign: 'center',
+                                padding: '0 2rem',
+                                zIndex: 10
+                            }}
                         >
-                            <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: step.color }}>{step.title}</h3>
-                            <p style={{ color: '#ccc', marginBottom: '1rem' }}>{step.desc}</p>
+                            <div style={{
+                                fontFamily: 'var(--font-display)',
+                                fontSize: '25vw',
+                                lineHeight: 1,
+                                opacity: 0.15,
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                zIndex: -1,
+                                whiteSpace: 'nowrap'
+                            }}>
+                                0{i + 1}
+                            </div>
+
+                            <h2 style={{
+                                fontFamily: 'var(--font-display)',
+                                fontSize: 'clamp(2.5rem, 5vw, 5rem)',
+                                textTransform: 'uppercase',
+                                marginBottom: '1.5rem',
+                                color: '#fff'
+                            }}>
+                                {step.title}
+                            </h2>
+
+                            <motion.p style={{
+                                fontFamily: 'var(--font-body)',
+                                fontSize: 'clamp(1rem, 1.25vw, 1.25rem)',
+                                color: 'var(--color-text-secondary)',
+                                maxWidth: '500px',
+                                margin: '0 auto 2rem auto',
+                                lineHeight: 1.4
+                            }}>
+                                {step.desc}
+                            </motion.p>
+
                             <div style={{
                                 display: 'inline-block',
-                                padding: '0.25rem 0.5rem',
-                                background: step.color,
-                                color: '#000',
-                                fontWeight: 'bold',
-                                fontSize: '0.8rem',
-                                borderRadius: '2px'
+                                padding: '0.8rem 2rem',
+                                border: '1px solid var(--color-accent)',
+                                color: 'var(--color-accent)',
+                                fontFamily: 'var(--font-mono)',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.2em',
+                                fontSize: '0.8rem'
                             }}>
-                                {step.stats}
+                                {step.stat}
                             </div>
-                        </div>
-                    ))}
-                </div>
-
-                <div style={displayWindowStyle}>
-                    {/* Visual representation of the active step */}
-                    <div style={{ textAlign: 'center' }}>
-                        <div style={{
-                            fontSize: '5rem',
-                            color: steps[activeStep].color,
-                            textShadow: `0 0 20px ${steps[activeStep].color}`,
-                            marginBottom: '1rem'
-                        }}>
-                            {indexToIcon(activeStep)}
-                        </div>
-                        <div style={{ color: '#fff', fontSize: '1.2rem', textTransform: 'uppercase' }}>
-                            {steps[activeStep].title} Station
-                        </div>
-                    </div>
-                </div>
+                        </motion.div>
+                    );
+                })}
             </div>
         </section>
     );
-};
-
-// Helper for rough icon visualization
-const indexToIcon = (index) => {
-    switch (index) {
-        case 0: return "⚙️"; // Milling
-        case 1: return "💧"; // Paste
-        case 2: return "🤖"; // Robot
-        case 3: return "🔥"; // Heat
-        default: return "❓";
-    }
 };
 
 export default AssemblyLine;

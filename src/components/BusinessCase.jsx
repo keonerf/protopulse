@@ -46,7 +46,7 @@ const BusinessCase = () => {
                     <tr>
                         <th style={thStyle}>Metric</th>
                         <th style={{ ...thStyle, color: '#aaa' }}>External Vendors</th>
-                        <th style={thStyle}>The OmniProto Station</th>
+                        <th style={thStyle}>ProtoBlock-1</th>
                     </tr>
                 </thead>
                 <tbody>

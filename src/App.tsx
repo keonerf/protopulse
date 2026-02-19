@@ -8,6 +8,7 @@ import BusinessCase from './components/BusinessCase';
 import SoftwareSuite from './components/SoftwareSuite';
 import MediaGallery from './components/MediaGallery';
 import Footer from './components/Footer';
+import ChatWidget from './components/ChatWidget';
 import Lenis from 'lenis';
 import './App.css';
 
@@ -41,6 +42,7 @@ function App(): React.JSX.Element {
       <SoftwareSuite />
       <MediaGallery />
       <Footer />
+      <ChatWidget />
     </div>
   );
 }

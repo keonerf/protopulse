@@ -52,7 +52,7 @@ const Capabilities: React.FC = () => {
           <div className="relative mx-auto max-w-2xl mb-14">
             <div className="relative aspect-[4/3]">
               <img
-                src="/assets/renders/baker-exploded.png"
+                src="/assets/renders/baker-exploded-full.png"
                 alt="Baker-01 gantry, dispenser and reflow systems, exploded"
                 className="absolute inset-0 w-full h-full object-contain"
               />

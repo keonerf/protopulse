@@ -94,10 +94,12 @@ async function seek(t) {
 /* Strip the film's chrome so the machine sits on true transparency:
    the Stage backdrop (#131210), the vignette gradient sprite, and the
    PP-01 clock HUD. Leaves the machine + its floor reflection. */
-async function hideChrome() {
-  await page.evaluate(() => {
+async function hideChrome(keepLabels = false) {
+  await page.evaluate((keepLabels) => {
     const film = document.querySelector('[data-pp-film]')
     if (film) film.style.background = 'transparent'
+    // chrome text we always strip, even in label mode: the clock + the MODULAR chip
+    const CHROME_TEXT = ['PP-01', 'MODULAR', 'swaps in minutes']
     for (const el of document.querySelectorAll('*')) {
       const s = el.style
       if (!s) continue
@@ -109,10 +111,12 @@ async function hideChrome() {
       if (cs.backgroundColor === 'rgb(19, 18, 16)' || cs.backgroundColor === 'rgb(0, 0, 0)') {
         el.style.background = 'transparent'
       }
-      // hide ALL text leaves (clock, titles, dim labels, callout labels, chips)
-      // — the machine geometry itself carries no text, so this cleans the frame.
+      // hide text leaves. In keepLabels mode we keep the exploded callout labels
+      // (part list) and only strip the clock HUD and the bottom-left chip.
       if (el.childElementCount === 0 && (el.textContent || '').trim() !== '') {
-        el.style.visibility = 'hidden'
+        const txt = el.textContent.trim()
+        const isChrome = CHROME_TEXT.some((c) => txt.includes(c))
+        if (!keepLabels || isChrome) el.style.visibility = 'hidden'
       }
     }
     // leader lines for the exploded callouts are thin 1px SVG/divs on the right;
@@ -122,7 +126,7 @@ async function hideChrome() {
       const r = svg.getBoundingClientRect()
       if (r.width < 900) svg.style.display = 'none'
     }
-  })
+  }, keepLabels)
 }
 
 async function shotSvg(file) {
@@ -221,11 +225,18 @@ const jobs = [
   { name: 'baker-exploded.png', t: 76.6 },  // g≈100 — full separation
   // S1_Hero (global 0–8) at t=7.85: assembled closed machine, all text faded.
   { name: 'baker-assembled.png', t: 7.85 },
+  // Exploded WITH the part-list callout labels kept (clock + chip stripped).
+  { name: 'baker-exploded-labeled.png', t: 78.0, keepLabels: true },
 ]
 
+// allow rendering a subset:  node scripts/renderstills.mjs --only baker-exploded-labeled.png
+const onlyIdx = process.argv.indexOf('--only')
+const onlyName = onlyIdx !== -1 ? process.argv[onlyIdx + 1] : null
+
 for (const j of jobs) {
+  if (onlyName && j.name !== onlyName) continue
   await seek(j.t)
-  await hideChrome()
+  await hideChrome(j.keepLabels === true)
   await new Promise((r) => setTimeout(r, 120))
   const raw = resolve(TMP, `raw_${j.name}`)
   await shotSvg(raw)

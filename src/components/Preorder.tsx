@@ -12,30 +12,35 @@ const Preorder: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const form = e.currentTarget
-    const data = new FormData(form)
+    const formData = new FormData(form)
+    const name = String(formData.get('name') || '')
+
+    // Web3Forms — delivers the submission straight to the account inbox,
+    // no backend or verified domain required.
+    formData.append('access_key', '5bddd4d5-9d50-4cfa-a2db-880c5e6a607c')
+    formData.append('subject', `New Baker-01 reservation — ${name}`)
+    formData.append('from_name', 'ProtoPulse Reservations')
 
     setStatus('submitting')
     setErrorMsg('')
+    console.log('[PP] submitting', [...formData.keys()])
 
     try {
-      const res = await fetch('/api/preorder', {
+      const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: data.get('name'),
-          email: data.get('email'),
-          org: data.get('org'),
-          company: data.get('company'), // honeypot
-        }),
+        body: formData,
       })
+      console.log('[PP] fetch resolved', res.status)
+      const data = await res.json().catch(() => ({ success: false }))
+      console.log('[PP] parsed', data.success)
 
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}))
-        throw new Error(body.error || 'Something went wrong. Please try again.')
+      if (!data.success) {
+        throw new Error(data.message || 'Something went wrong. Please try again.')
       }
 
       setStatus('submitted')
     } catch (err) {
+      console.log('[PP] catch', String(err))
       setStatus('error')
       setErrorMsg(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
     }
@@ -89,13 +94,14 @@ const Preorder: React.FC = () => {
                   exit={{ opacity: 0, y: -8 }}
                   className="space-y-5"
                 >
-                  {/* honeypot — hidden from real users, bots tend to fill every field */}
+                  {/* Web3Forms honeypot — bots tick this, real users never see it */}
                   <input
-                    type="text"
-                    name="company"
+                    type="checkbox"
+                    name="botcheck"
                     tabIndex={-1}
                     autoComplete="off"
-                    className="absolute -left-[9999px] w-px h-px opacity-0"
+                    className="hidden"
+                    style={{ display: 'none' }}
                     aria-hidden="true"
                   />
                   <div>

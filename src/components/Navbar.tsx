@@ -36,24 +36,23 @@ const Navbar: React.FC = () => {
         transition={{ duration: 0.8, delay: 0.3 }}
         className="fixed top-[32px] left-0 right-0 z-sticky px-4 sm:px-6 lg:px-8 py-3"
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="max-w-7xl mx-auto relative flex items-center justify-between">
           {/* Left — logo */}
           <div
             className={`flex items-center rounded-full px-5 py-2.5 transition-all duration-500 ${
               scrolled ? 'bg-charcoal/85 backdrop-blur-sm' : 'bg-transparent'
             }`}
           >
-            <a href="#top" className="logo-hover inline-flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-rust inline-block" style={{ animation: 'blink 2.5s ease-in-out infinite' }} />
-              <span className="font-mono logo-sweep text-sm tracking-[0.25em] uppercase">
+            <a href="#top" className="logo-hover inline-flex items-center">
+              <span className="font-logo logo-sweep text-lg leading-none">
                 protopulse
               </span>
             </a>
           </div>
 
-          {/* Center — nav links */}
+          {/* Center — nav links, pinned to the true centre of the bar */}
           <div
-            className={`hidden md:flex items-center gap-1 rounded-full px-2 py-1.5 transition-all duration-500 ${
+            className={`hidden md:flex items-center gap-1 rounded-full px-2 py-1.5 absolute left-1/2 -translate-x-1/2 transition-all duration-500 ${
               scrolled ? 'bg-charcoal/85 backdrop-blur-sm' : 'bg-transparent border border-white/10'
             }`}
           >

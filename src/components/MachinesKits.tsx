@@ -33,11 +33,11 @@ const MachinesKits: React.FC = () => {
             className="group glass-card w-full text-left p-7 lg:p-9 grid md:grid-cols-2 gap-8 items-center mb-5"
             aria-label="Open the interactive Baker-01 model"
           >
-            <div className="relative min-h-[390px] rounded-xl bg-charcoal/60 overflow-hidden">
+            <div className="relative min-h-[250px] rounded-xl bg-charcoal/60 overflow-hidden">
               <img
                 src="/assets/renders/baker-intermediate.png"
                 alt="Baker-01 desktop PCB fabrication station"
-                className="absolute inset-0 w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-[1.04]"
+                className="absolute inset-0 w-full h-full object-contain scale-[1.3] transition-transform duration-500 group-hover:scale-[1.35]"
               />
             </div>
             <div>

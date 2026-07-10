@@ -1175,11 +1175,11 @@ function ExplodedView({ g }) {
   const L = ({ z, text, sub, oy = 0 }) => {
     const a = P(560, 40, z);
     return (
-      <div style={{ position: 'absolute', left: 0, top: 0 }}>
-        <div style={{ position: 'absolute', left: a[0] + 14, top: a[1] + oy, width: 120, height: 1, background: 'rgba(239,236,229,0.35)' }} />
-        <div style={{ position: 'absolute', left: a[0] + 148, top: a[1] - 22 + oy }}>
-          <div style={{ fontFamily: MONO, fontSize: 21, color: ACC, letterSpacing: 2, whiteSpace: 'nowrap' }}>{text}</div>
-          <div style={{ fontFamily: FONT, fontSize: 21, color: MUT, whiteSpace: 'nowrap', marginTop: 4 }}>{sub}</div>
+      <div style={{ position: 'absolute', left: 0, top: 0, zIndex: 10 }}>
+        <div style={{ position: 'absolute', left: a[0] + 14, top: a[1] + oy, width: 140, height: 2, background: ACC, willChange: 'left, top' }} />
+        <div style={{ position: 'absolute', left: a[0] + 168, top: a[1] - 40 + oy }}>
+          <div style={{ fontFamily: MONO, fontSize: 38, color: ACC, letterSpacing: 2, whiteSpace: 'nowrap' }}>{text}</div>
+          <div style={{ fontFamily: FONT, fontSize: 30, color: MUT, whiteSpace: 'nowrap', marginTop: 8 }}>{sub}</div>
         </div>
       </div>
     );
@@ -1195,7 +1195,7 @@ function ExplodedView({ g }) {
     <IsoBox x={290} y={120} z={z + gap(1)} w={110} d={180} h={95} top="#4f6069" right="#405057" left="#344146" />
     <IsoBox x={425} y={120} z={z + gap(1)} w={110} d={180} h={95} top="#556052" right="#454f43" left="#384136" />
   </div>);
-  lv.push(<L key="vl" z={z + gap(1) + 52} oy={14} text="VACUUM + SUPPLIES" sub="cyclone · dust bin · mask + paste cartridges" />);
+  lv.push(<L key="vl" z={z + gap(1) + 52} oy={32} text="VACUUM + SUPPLIES" sub="cyclone · dust bin · mask + paste cartridges" />);
   z += 105;
   lv.push(<div key="b" style={{ position: 'absolute' }}>
     <IsoBox x={40} y={50} z={z + gap(2)} w={350} d={320} h={28} top="#5f5d57" right="#4b4943" left="#3e3c37" />
@@ -1206,9 +1206,9 @@ function ExplodedView({ g }) {
     <IsoBox x={445} y={153} z={z + gap(2) + 28} w={64} d={64} h={26} top="#8fd8de" right="#5fb3bc" left="#4d99a2" />
     <IsoBox x={408} y={255} z={z + gap(2)} w={148} d={130} h={88} top="#eceae5" right="#dbd8d1" left="#c2bfb8" />
   </div>);
-  lv.push(<L key="bl" z={z + gap(2) + 5} oy={52} text="FIXED BED" sub="board shuttles on rails" />);
-  lv.push(<L key="ol" z={z + gap(2) + 58} oy={-18} text="REFLOW OVEN" sub="SAC305 profile · sealed port" />);
-  lv.push(<L key="pl" z={z + gap(2) + 105} oy={-92} text="3D PRINTER BAY" sub="molds & jigs, printed in parallel" />);
+  lv.push(<L key="bl" z={z + gap(2) + 5} oy={62} text="FIXED BED" sub="board shuttles on rails" />);
+  lv.push(<L key="ol" z={z + gap(2) + 58} oy={-14} text="REFLOW OVEN" sub="SAC305 profile · sealed port" />);
+  lv.push(<L key="pl" z={z + gap(2) + 105} oy={-100} text="3D PRINTER BAY" sub="molds & jigs, printed in parallel" />);
   z += 60;
   const gz = z + gap(3);
   lv.push(<div key="g" style={{ position: 'absolute' }}>
@@ -1220,7 +1220,7 @@ function ExplodedView({ g }) {
     <IsoBox x={162} y={158} z={gz + 96} w={12} d={12} h={40} top="#5a2c28" right="#48211e" left="#3a1a17" />
     <IsoBox x={238} y={156} z={gz + 110} w={26} d={26} h={42} top="#2b2924" right="#211f1c" left="#191715" />
   </div>);
-  lv.push(<L key="gl" z={gz + 170} text="CNC GANTRY" sub="isolation milling + stencil laser + vision" />);
+  lv.push(<L key="gl" z={gz + 170} oy={-14} text="CNC GANTRY" sub="isolation milling + stencil laser + vision" />);
   z += 300;
   lv.push(<div key="m" style={{ position: 'absolute' }}>
     <IsoBox x={14} y={140} z={z + gap(4)} w={386} d={72} h={64} top="#5d5a53" right="#4c4a44" left="#3e3c37" />
@@ -1241,7 +1241,7 @@ function ExplodedView({ g }) {
 function S8_Exploded() {
   const { localTime: t } = useSprite();
   const g = Easing.easeInOutCubic(cl((t - 0.6) / 2.2)) * 100;
-  const s = interpolate([0, 8], [0.50, 0.45], Easing.linear)(t);
+  const s = 0.50;
   const y = interpolate([0, 2.8], [250, 270], Easing.easeInOutCubic)(t);
   return (
     <FadeIn t={t}>
@@ -1275,11 +1275,11 @@ function S9_Outro() {
           <div style={{ fontFamily: FONT, fontSize: 84, fontWeight: 700, color: INK, letterSpacing: -2, opacity: line(0), transform: `translateY(${(1 - line(0)) * 20}px)` }}>
             Protopulse
           </div>
-          <div style={{ marginTop: 46, display: 'grid', gap: 30 }}>
+          <div style={{ marginTop: 46, display: 'grid', gap: 32 }}>
             {specs.map(([a, b], i) => (
               <div key={i} style={{ opacity: line(i + 1), transform: `translateY(${(1 - line(i + 1)) * 18}px)` }}>
-                <div style={{ fontFamily: MONO, fontSize: 27, color: ACC, letterSpacing: 1, whiteSpace: 'nowrap' }}>{a}</div>
-                <div style={{ fontFamily: FONT, fontSize: 22, color: MUT, marginTop: 5 }}>{b}</div>
+                <div style={{ fontFamily: MONO, fontSize: 31, color: ACC, letterSpacing: 1, whiteSpace: 'nowrap' }}>{a}</div>
+                <div style={{ fontFamily: FONT, fontSize: 25, color: MUT, marginTop: 5 }}>{b}</div>
               </div>
             ))}
           </div>
@@ -1334,7 +1334,7 @@ function ProtopulseFilm({ accent, captions }) {
   const stepScenes = [Step1_Scan, Step2_Mill, Step3_Clean, Step4_Mask, Step5_Cure, Step6_Stencil, Step7_Paste, Step8_Place, Step9_Reflow];
   const explodedStart = stepAt(9);            /* 73.5 */
   const outroStart = explodedStart + 8;       /* 75 */
-  const total = outroStart + 9;               /* 84 */
+  const total = outroStart + 9;               /* 90.5 */
   return (
     <div data-pp-film data-screen-label="protopulse-film" style={{ position: 'fixed', inset: 0, background: '#000', '--acc': acc }}>
       <ResizeFix />

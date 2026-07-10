@@ -3,12 +3,42 @@ import { AnimatePresence, motion } from 'framer-motion'
 import Eyebrow from './Eyebrow'
 import ScrollReveal from './ScrollReveal'
 
-const Preorder: React.FC = () => {
-  const [submitted, setSubmitted] = useState(false)
+type Status = 'idle' | 'submitting' | 'submitted' | 'error'
 
-  const handleSubmit = (e: React.FormEvent) => {
+const Preorder: React.FC = () => {
+  const [status, setStatus] = useState<Status>('idle')
+  const [errorMsg, setErrorMsg] = useState('')
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setSubmitted(true)
+    const form = e.currentTarget
+    const data = new FormData(form)
+
+    setStatus('submitting')
+    setErrorMsg('')
+
+    try {
+      const res = await fetch('/api/preorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: data.get('name'),
+          email: data.get('email'),
+          org: data.get('org'),
+          company: data.get('company'), // honeypot
+        }),
+      })
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        throw new Error(body.error || 'Something went wrong. Please try again.')
+      }
+
+      setStatus('submitted')
+    } catch (err) {
+      setStatus('error')
+      setErrorMsg(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
+    }
   }
 
   return (
@@ -35,7 +65,7 @@ const Preorder: React.FC = () => {
         <ScrollReveal delay={0.2}>
           <div className="glass-card p-7 lg:p-10">
             <AnimatePresence mode="wait">
-              {submitted ? (
+              {status === 'submitted' ? (
                 <motion.div
                   key="done"
                   initial={{ opacity: 0, y: 12 }}
@@ -59,12 +89,22 @@ const Preorder: React.FC = () => {
                   exit={{ opacity: 0, y: -8 }}
                   className="space-y-5"
                 >
+                  {/* honeypot — hidden from real users, bots tend to fill every field */}
+                  <input
+                    type="text"
+                    name="company"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    className="absolute -left-[9999px] w-px h-px opacity-0"
+                    aria-hidden="true"
+                  />
                   <div>
                     <label htmlFor="po-name" className="block font-mono text-[10px] text-cream/45 uppercase tracking-[0.2em] mb-2">
                       Full name
                     </label>
                     <input
                       id="po-name"
+                      name="name"
                       type="text"
                       required
                       placeholder="Ada Lovelace"
@@ -77,6 +117,7 @@ const Preorder: React.FC = () => {
                     </label>
                     <input
                       id="po-email"
+                      name="email"
                       type="email"
                       required
                       placeholder="you@lab.in"
@@ -89,16 +130,23 @@ const Preorder: React.FC = () => {
                     </label>
                     <input
                       id="po-org"
+                      name="org"
                       type="text"
                       placeholder="Lab, startup or college"
                       className="w-full bg-charcoal border border-cream/12 rounded-lg px-4 py-3 font-body text-sm text-cream placeholder:text-cream/25 focus:border-rust/50 focus:outline-none transition-colors"
                     />
                   </div>
+
+                  {status === 'error' && (
+                    <p className="font-body text-sm text-red-400">{errorMsg}</p>
+                  )}
+
                   <button
                     type="submit"
-                    className="w-full font-body text-sm font-medium bg-rust text-charcoal px-7 py-3.5 rounded-full hover:bg-rust-light hover:scale-[1.01] active:scale-[0.99] transition-all duration-300"
+                    disabled={status === 'submitting'}
+                    className="w-full font-body text-sm font-medium bg-rust text-charcoal px-7 py-3.5 rounded-full hover:bg-rust-light hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
-                    Reserve →
+                    {status === 'submitting' ? 'Reserving…' : 'Reserve →'}
                   </button>
                 </motion.form>
               )}

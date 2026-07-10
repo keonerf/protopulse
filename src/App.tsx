@@ -1,50 +1,57 @@
-import React, { useEffect } from 'react';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import FounderVision from './components/FounderVision';
-import NarrativeHook from './components/NarrativeHook';
-import AssemblyLine from './components/AssemblyLine';
-import BusinessCase from './components/BusinessCase';
-import SoftwareSuite from './components/SoftwareSuite';
-import MediaGallery from './components/MediaGallery';
-import Footer from './components/Footer';
-import ChatWidget from './components/ChatWidget';
-import Lenis from 'lenis';
-import './App.css';
+import { useEffect } from 'react'
+import Lenis from 'lenis'
+import Navbar from './components/Navbar'
+import Hero from './components/Hero'
+import MachinesKits from './components/MachinesKits'
+import Capabilities from './components/Capabilities'
+import Assembly from './components/Assembly'
+import SpecsBanner from './components/SpecsBanner'
+import Software from './components/Software'
+import Comparison from './components/Comparison'
+import Preorder from './components/Preorder'
+import Founders from './components/Founders'
+import Footer from './components/Footer'
+import ModelViewer from './components/ModelViewer'
 
-function App(): React.JSX.Element {
+function App() {
   useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (prefersReducedMotion) return
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    });
+    })
 
-    function raf(time: number): void {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
+    let rafId: number
+    function raf(time: number) {
+      lenis.raf(time)
+      rafId = requestAnimationFrame(raf)
     }
-
-    requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf)
 
     return () => {
-      lenis.destroy();
-    };
-  }, []);
+      cancelAnimationFrame(rafId)
+      lenis.destroy()
+    }
+  }, [])
 
   return (
-    <div className="App">
+    <div className="relative">
       <Navbar />
       <Hero />
-      <FounderVision />
-      <NarrativeHook />
-      <AssemblyLine />
-      <BusinessCase />
-      <SoftwareSuite />
-      <MediaGallery />
+      <MachinesKits />
+      <Capabilities />
+      <Assembly />
+      <SpecsBanner />
+      <Software />
+      <Comparison />
+      <Preorder />
+      <Founders />
       <Footer />
-      <ChatWidget />
+      <ModelViewer />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

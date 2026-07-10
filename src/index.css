@@ -1,106 +1,222 @@
-@import '@fontsource/anton';
-@import '@fontsource/space-grotesk';
+@import 'tailwindcss';
 
-:root {
-  /* Premium Dark Palette */
-  --color-bg-deep: #030303;
-  --color-bg-surface: #0a0a0a;
-  --color-accent: #00FFFF;
-  /* Electric Cyan */
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #888888;
+@theme {
+  /* Brand colors — warm copper/gold palette (Baker-01) */
+  --color-rust: #CF8F4E;
+  --color-rust-light: #e0c9a6;
+  --color-rust-dark: #b07a3d;
 
-  /* Typography */
-  --font-display: 'Anton', sans-serif;
-  --font-body: 'Space Grotesk', sans-serif;
+  --color-charcoal: #0f0e0c;
+  --color-charcoal-light: #161513;
+  --color-charcoal-lighter: #1e1c19;
 
-  --spacing-section: 4rem;
-  /* Further compressed */
-  /* Spacing & Layout */
-  --spacing-container: 4vw;
-  --radius-sm: 2px;
+  --color-cream: #efece5;
+  --color-cream-muted: #8d897f;
+
+  /* Fonts */
+  --font-logo: 'JA Jayagiri Sans', 'Space Grotesk', sans-serif;
+  --font-heading: 'Space Grotesk', 'Inter', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+  --font-serif: 'Playfair Display', Georgia, serif;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@font-face {
+  font-family: 'JA Jayagiri Sans';
+  src: url('/fonts/JayaGiri-Sans.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
-html.lenis {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-
-.lenis.lenis-scrolling iframe {
-  pointer-events: none;
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background-color: var(--color-bg-deep);
-  color: var(--color-text-primary);
-  font-family: var(--font-body);
-  line-height: 1.5;
-  overflow-x: hidden;
+  background-color: #0f0e0c;
+  color: #efece5;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: #CF8F4E;
+  color: #0f0e0c;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0f0e0c;
+}
+::-webkit-scrollbar-thumb {
+  background: #CF8F4E;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #e0c9a6;
+}
+
+:focus-visible {
+  outline: 2px solid #CF8F4E;
+  outline-offset: 2px;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid #CF8F4E;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.text-wrap-balance {
+  text-wrap: balance;
+}
+
+/* Z-index scale */
+.z-banner {
+  z-index: 250;
+}
+.z-sticky {
+  z-index: 200;
+}
+.z-modal {
+  z-index: 400;
+}
+
+/* ---- Glass card pattern ---- */
+.glass-card {
+  background: linear-gradient(
+    145deg,
+    rgba(30, 28, 25, 0.9) 0%,
+    rgba(22, 21, 19, 0.95) 100%
+  );
+  border: 1px solid rgba(207, 143, 78, 0.12);
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+}
+.glass-card:hover {
+  border-color: rgba(207, 143, 78, 0.28);
+  box-shadow: 0 8px 32px rgba(207, 143, 78, 0.08);
+  transform: translateY(-2px);
+}
+
+/* ---- Announcement banner ---- */
+.announcement-banner {
+  background: linear-gradient(90deg, #CF8F4E 0%, #b07a3d 50%, #CF8F4E 100%);
+  background-size: 200% 100%;
+  animation: banner-shimmer 8s linear infinite;
+}
+@keyframes banner-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ---- live accents ---- */
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* logo wordmark — a bright pulse of "current" travels through the letters on hover */
+.logo-sweep {
+  background: linear-gradient(
+    105deg,
+    #efece5 0%,
+    #efece5 42%,
+    #ffffff 50%,
+    #efece5 58%,
+    #efece5 100%
+  );
+  background-size: 300% 100%;
+  background-position: 120% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  transition:
+    letter-spacing 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.logo-hover:hover .logo-sweep {
+  animation: logo-sweep 1.25s linear infinite;
+}
+.logo-hover-hero:hover .logo-sweep {
+  letter-spacing: 0.03em;
+  transform: scale(1.035);
+}
+@keyframes logo-sweep {
+  from {
+    background-position: 165% 0;
+  }
+  to {
+    background-position: -65% 0;
+  }
+}
+
+/* supported-tools marquee */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 26s linear infinite;
+}
+.marquee-mask:hover .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ---- Spec item dividers ---- */
+.spec-divider {
   position: relative;
 }
-
-/* Noise Overlay */
-body::after {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.07;
+.spec-divider::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background: rgba(207, 143, 78, 0.2);
+}
+.spec-divider:last-child::after {
+  display: none;
 }
 
-/* Selection */
-::selection {
-  background: var(--color-accent);
-  color: #000;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-display);
-  text-transform: uppercase;
-  font-weight: 400;
-  /* Anton only has 400 */
-  letter-spacing: 0.02em;
-}
-
-img {
-  max-width: 100%;
-  display: block;
-}
-
-button {
-  cursor: pointer;
-  font-family: inherit;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+  .marquee-track {
+    animation: none;
+  }
+  .announcement-banner {
+    animation: none;
+  }
 }

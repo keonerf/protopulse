@@ -1,88 +1,90 @@
-# ProtoPulse
+# ProtoPulse — protopulse.com
 
-**From Gerber to Prototype in 60 Minutes.**
+**Gerber in. Board out. One hour.**
 
-ProtoPulse represents the future of hardware prototyping. Our flagship system, **ProtoBlock-1**, integrates isolation milling, conductive paste dispensing, pick-and-place, and reflow soldering into a single desktop unit.
+Product site for **ProtoBlock-1**, ProtoPulse's desktop PCB prototyping
+station: CNC isolation milling, solder-paste stencilling, mould-based
+component placement, and reflow — four stages in one tower, driven by
+one piece of software.
 
-🔗 **Live Site** — [proto-pulse.vercel.app](https://proto-pulse.vercel.app)
-
----
-
-## Frontend Stack
-
-### Core
-
-| Technology | Version | Purpose |
-|---|---|---|
-| **React** | 19.2 | UI component library — functional components with hooks |
-| **TypeScript** | 5.9 | Static type-checking with `strict` mode enabled |
-| **Vite** | 7.2 | Build tool & dev server — instant HMR, ESM-native bundling |
-
-### Animation & Scroll
-
-| Technology | Version | Purpose |
-|---|---|---|
-| **Framer Motion** | 12.29 | Declarative animations — scroll-linked transforms, viewport-triggered reveals, layout transitions |
-| **Lenis** | 1.3 | Smooth scroll engine — replaces native scroll with inertia-based scrolling for a premium feel |
-
-### Typography
-
-| Technology | Version | Purpose |
-|---|---|---|
-| **@fontsource/anton** | 5.2 | Display typeface — self-hosted, no external requests to Google Fonts |
-| **@fontsource/space-grotesk** | 5.2 | Body typeface — geometric sans-serif for readability |
-
-### Dev Tooling
-
-| Technology | Version | Purpose |
-|---|---|---|
-| **ESLint** | 9.39 | Linting with `react-hooks` and `react-refresh` plugins |
-| **typescript-eslint** | 8.56 | TypeScript-aware ESLint rules |
-| **@vitejs/plugin-react** | 5.1 | React Fast Refresh integration for Vite |
+🔗 **Live** — [proto-pulse.vercel.app](https://proto-pulse.vercel.app)
 
 ---
 
-## Project Structure
+## Design direction
+
+Dark precision-instrument aesthetic, minimal and product-first:
+
+- **Palette** — enclosure black `#07090B`, signal cyan `#3ADCEC`
+  (sampled from the ProtoPulse Suite UI), copper `#C98A4B` as the
+  material counterpoint (raw board / reflow heat).
+- **Type** — Space Grotesk (display + body) and JetBrains Mono
+  (specs, labels, readouts), both self-hosted via Fontsource.
+- **Motion** — premium personality: `cubic-bezier(0.16,1,0.3,1)`,
+  no overshoot, transform/opacity only, `prefers-reduced-motion`
+  respected everywhere.
+
+### Signature moments
+
+1. **Hero autorouter** (`HeroCanvas.tsx`) — a canvas ambient that routes
+   PCB traces in 45°-constrained segments, ends them in pads, and runs
+   occasional signal pulses down completed nets.
+2. **Machine scan-build** (`Machine.tsx`) — a 340vh scroll scrub where
+   ProtoBlock-1 assembles behind a traveling scan line: exploded CAD
+   ghost above, solid tower below, a focus bracket gliding between the
+   four station bays, and a live assembly-% readout.
+3. **The board that builds itself** (`Process.tsx` + `PCBBoard.tsx`) —
+   an SVG rendition of the real test circuit (555 blinker, 19 traces,
+   15 pads) that is milled, pasted, populated, and reflowed as you
+   scroll, ending with the LED actually blinking at ~3 Hz.
+
+## Stack
+
+| | |
+|---|---|
+| React 19 + TypeScript 5.9 | UI, strict mode |
+| Vite 7 | build/dev |
+| Framer Motion 12 | scroll scrubs, reveals, SVG choreography |
+| Lenis 1.3 | inertia scrolling (skipped under reduced motion) |
+
+## Structure
 
 ```
-protopulse/
-├── index.html              # App entry point
-├── vite.config.ts           # Vite configuration
-├── tsconfig.json            # TypeScript config (strict mode)
-├── src/
-│   ├── main.tsx             # React root mount
-│   ├── App.tsx              # Layout shell + Lenis smooth scroll
-│   ├── index.css            # Global styles & CSS variables
-│   ├── App.css              # App-level layout styles
-│   ├── vite-env.d.ts        # Vite client type declarations
-│   └── components/
-│       ├── Navbar.tsx        # Fixed pill-shaped navigation bar
-│       ├── Hero.tsx          # Full-viewport hero with parallax text
-│       ├── FounderVision.tsx # Co-founder bios grid
-│       ├── NarrativeHook.tsx # Value proposition / narrative section
-│       ├── AssemblyLine.tsx  # Scroll-animated 4-step process showcase
-│       ├── BusinessCase.tsx  # Competitor comparison table + metrics
-│       ├── SoftwareSuite.tsx # Software features grid + UI mockup
-│       ├── MediaGallery.tsx  # YouTube embed + CAD render gallery
-│       └── Footer.tsx        # Footer with social links
+src/
+├── App.tsx                  # section composition + Lenis
+├── index.css                # design tokens, base, shared utilities
+└── components/
+    ├── Navbar.tsx            # fixed bar, blur-on-scroll
+    ├── Hero.tsx / HeroCanvas.tsx
+    ├── Problem.tsx           # three pains, type-only
+    ├── Machine.tsx           # scan-line assembly scrub
+    ├── Process.tsx / PCBBoard.tsx
+    ├── Mould.tsx             # ₹8 vs ₹4,00,000 moment
+    ├── Software.tsx          # suite screenshot + pipeline terminal
+    ├── Numbers.tsx           # economics delta table
+    ├── Specs.tsx             # datasheet grid
+    ├── Contact.tsx / Footer.tsx
+scripts/
+├── cutout.mjs               # bg-removal for the CAD renders (sharp)
+├── genframes.mjs            # Nano Banana frame-sequence generator*
+└── shoot.mjs / reshoot.mjs  # headless-Edge screenshot QA rig
 ```
 
----
+\* `genframes.mjs` regenerates a 6-frame studio assembly sequence via
+`gemini-2.5-flash-image`. It needs `GEMINI_API_KEY` from a project with
+image-generation quota (billed tier); the current site uses locally
+processed CAD cutouts instead.
 
-## Getting Started
+## Develop
 
 ```bash
 npm install
-npm run dev
+npm run dev      # http://localhost:5173
+npm run build    # production bundle → dist/
+npm run lint
 ```
 
-## Build
+## Deploy
 
-```bash
-npm run build    # Production bundle → dist/
-npm run preview  # Preview the production build locally
-```
-
-## Deployment
-
-Deployed on **Vercel** with automatic deploys from the `main` branch.
+Vercel, auto-deploy from `main`. `api/chat.ts` (Gemini-backed assistant
+endpoint) is retained but currently has no frontend surface.

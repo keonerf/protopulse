@@ -1,4 +1,3 @@
-import { GoogleGenAI } from "@google/genai";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 const SYSTEM_PROMPT = `You are the ProtoPulse AI Assistant — a knowledgeable, friendly, and professional expert on the ProtoPulse product ecosystem, the company behind it, and PCB/electronics prototyping in general.
@@ -68,6 +67,23 @@ interface ChatMessage {
     content: string;
 }
 
+interface GeminiContent {
+    role: "user" | "model";
+    parts: { text: string }[];
+}
+
+interface GeminiResponse {
+    candidates?: {
+        content?: {
+            parts?: { text?: string }[];
+        };
+    }[];
+    error?: {
+        message?: string;
+        code?: number;
+    };
+}
+
 // Basic in-memory rate limiting
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT = 20; // requests per window
@@ -94,13 +110,23 @@ export default async function handler(
     req: VercelRequest,
     res: VercelResponse
 ) {
+    // CORS headers
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+    if (req.method === "OPTIONS") {
+        return res.status(200).end();
+    }
+
     if (req.method !== "POST") {
         return res.status(405).json({ error: "Method not allowed" });
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-        return res.status(500).json({ error: "GEMINI_API_KEY is not configured" });
+        console.error("GEMINI_API_KEY is not set in environment variables");
+        return res.status(500).json({ error: "API key not configured" });
     }
 
     // Rate limiting
@@ -120,27 +146,52 @@ export default async function handler(
     }
 
     try {
-        const ai = new GoogleGenAI({ apiKey });
-
-        // Build conversation history for Gemini
-        const contents = messages.map((msg) => ({
+        // Build conversation history for Gemini REST API
+        const contents: GeminiContent[] = messages.map((msg) => ({
             role: msg.role === "user" ? ("user" as const) : ("model" as const),
             parts: [{ text: msg.content }],
         }));
 
-        const response = await ai.models.generateContent({
-            model: "gemini-2.0-flash",
+        // Call Gemini REST API directly via fetch (no SDK needed)
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+        const body = {
+            system_instruction: {
+                parts: [{ text: SYSTEM_PROMPT }],
+            },
             contents,
-            config: {
-                systemInstruction: SYSTEM_PROMPT,
+            generationConfig: {
                 maxOutputTokens: 1024,
                 temperature: 0.7,
                 topP: 0.9,
             },
+        };
+
+        const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
         });
 
+        if (!response.ok) {
+            const errorBody = await response.text();
+            console.error("Gemini API HTTP error:", response.status, errorBody);
+            return res.status(502).json({
+                error: `Gemini API returned status ${response.status}`,
+            });
+        }
+
+        const data = (await response.json()) as GeminiResponse;
+
+        if (data.error) {
+            console.error("Gemini API error:", data.error);
+            return res.status(502).json({
+                error: data.error.message || "Gemini API returned an error",
+            });
+        }
+
         const text =
-            response.candidates?.[0]?.content?.parts?.[0]?.text ||
+            data.candidates?.[0]?.content?.parts?.[0]?.text ||
             "I apologize, but I wasn't able to generate a response. Please try again.";
 
         return res.status(200).json({ response: text });

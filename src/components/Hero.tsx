@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { openModel } from '../lib/modelBus'
 
 // The three-beat brand motto. The active index travels machine → software → hour.
 const motto = ['One machine', 'One software', 'One hour']
@@ -70,44 +69,58 @@ const Hero: React.FC = () => {
         ))}
       </motion.div>
 
-      {/* exploded 3D model — click to open the interactive viewer */}
-      <motion.button
-        initial={{ opacity: 0, scale: 0.94 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.9, ease: 'easeOut', delay: 0.75 }}
-        onClick={openModel}
-        className="group relative mt-8 block"
-        aria-label="Open the interactive Baker-01 model"
-      >
-        <img
-          src="/assets/renders/baker-exploded.png"
-          alt="Baker-01 desktop PCB fabrication station, exploded view"
-          className="h-[34vh] sm:h-[38vh] max-h-[420px] w-auto object-contain transition-transform duration-500 group-hover:scale-[1.04] drop-shadow-2xl"
-        />
-        <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-2 font-mono text-[10px] text-charcoal/70 uppercase tracking-[0.22em] whitespace-nowrap">
-          <span className="w-1.5 h-1.5 rounded-full bg-charcoal" style={{ animation: 'blink 1.6s ease-in-out infinite' }} />
-          Tap to explore Baker-01
-        </span>
-      </motion.button>
-
-      {/* CTAs */}
+      {/* two showcase cards — the build film + the interactive model */}
       <motion.div
-        initial={{ opacity: 0, y: 15 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.0, duration: 0.6 }}
-        className="flex flex-wrap gap-4 justify-center mt-12"
+        transition={{ duration: 0.8, ease: 'easeOut', delay: 0.8 }}
+        className="grid sm:grid-cols-2 gap-5 w-full max-w-3xl mt-12"
       >
+        {/* Card 1 — the build film (video) */}
         <a
-          href="#preorder"
-          className="font-body text-sm font-medium bg-charcoal text-cream px-7 py-3 rounded-full hover:bg-charcoal-light hover:scale-[1.03] active:scale-95 transition-all duration-300"
+          href="/film/watch.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group relative rounded-2xl overflow-hidden bg-charcoal border border-charcoal-lighter text-left shadow-xl transition-transform duration-400 hover:-translate-y-1"
         >
-          Pre-order
+          <div className="relative aspect-[16/10] overflow-hidden bg-charcoal-light">
+            <img
+              src="/assets/renders/baker-assembled.png"
+              alt="Baker-01 assembly film"
+              className="absolute inset-0 w-full h-full object-contain p-6 transition-transform duration-500 group-hover:scale-[1.05]"
+            />
+            <span className="absolute top-3 left-3 flex items-center gap-1.5 font-mono text-[9px] text-cream uppercase tracking-[0.2em] bg-charcoal/70 backdrop-blur-sm rounded-full px-2.5 py-1">
+              <span className="text-rust">▶</span> Film
+            </span>
+          </div>
+          <div className="p-5">
+            <h3 className="font-heading text-base font-semibold text-cream mb-0.5">Watch it build</h3>
+            <p className="font-mono text-[10px] text-cream/45 uppercase tracking-wider">90-second assembly film →</p>
+          </div>
         </a>
+
+        {/* Card 2 — interactive scroll-driven model */}
         <a
-          href="#process"
-          className="font-body text-sm font-medium border border-charcoal/30 text-charcoal px-7 py-3 rounded-full hover:border-charcoal/60 hover:bg-charcoal/5 transition-all duration-300"
+          href="/film/explore.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group relative rounded-2xl overflow-hidden bg-charcoal border border-charcoal-lighter text-left shadow-xl transition-transform duration-400 hover:-translate-y-1"
+          aria-label="Open the interactive Baker-01 model"
         >
-          See it work →
+          <div className="relative aspect-[16/10] overflow-hidden bg-charcoal-light">
+            <img
+              src="/assets/renders/baker-exploded.png"
+              alt="Baker-01 interactive exploded model"
+              className="absolute inset-0 w-full h-full object-contain p-6 transition-transform duration-500 group-hover:scale-[1.05]"
+            />
+            <span className="absolute top-3 left-3 flex items-center gap-1.5 font-mono text-[9px] text-cream uppercase tracking-[0.2em] bg-charcoal/70 backdrop-blur-sm rounded-full px-2.5 py-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-rust" style={{ animation: 'blink 1.6s ease-in-out infinite' }} /> Live
+            </span>
+          </div>
+          <div className="p-5">
+            <h3 className="font-heading text-base font-semibold text-cream mb-0.5">Explore the model</h3>
+            <p className="font-mono text-[10px] text-cream/45 uppercase tracking-wider">Interactive 3D view →</p>
+          </div>
         </a>
       </motion.div>
     </section>

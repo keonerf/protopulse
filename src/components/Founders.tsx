@@ -8,6 +8,7 @@ const team = [
     domain: 'Technology',
     bio: 'Technical architect behind Baker-01. Lead engineer for the proprietary multi-stage assembly line, delivering industrial-grade precision in a desktop footprint.',
     initials: 'SN',
+    email: 'sohamnalawade77@gmail.com',
   },
   {
     name: 'Avi Prakash Jaiswal',
@@ -15,6 +16,7 @@ const team = [
     domain: 'Business',
     bio: 'Strategic lead for growth, product-market fit, and investor relations. Drives go-to-market strategy to set a new global standard for desktop PCB fabrication.',
     initials: 'AP',
+    email: 'aviprakashjaiswal@gmail.com',
   },
 ]
 
@@ -54,9 +56,15 @@ const Founders: React.FC = () => {
                 <div className="font-mono text-[10px] text-cream-muted uppercase tracking-wider mb-4">
                   {member.role}
                 </div>
-                <p className="font-body text-sm text-cream-muted leading-relaxed max-w-sm mx-auto md:mx-0">
+                <p className="font-body text-sm text-cream-muted leading-relaxed max-w-sm mx-auto md:mx-0 mb-4">
                   {member.bio}
                 </p>
+                <a
+                  href={`mailto:${member.email}`}
+                  className="font-mono text-[11px] text-rust-light hover:text-rust transition-colors break-all"
+                >
+                  {member.email}
+                </a>
               </div>
             </ScrollReveal>
           ))}

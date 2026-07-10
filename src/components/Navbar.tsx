@@ -5,7 +5,6 @@ const navLinks = [
   { label: 'Machines', href: '#machines' },
   { label: 'Capabilities', href: '#capabilities' },
   { label: 'Specs', href: '#specs' },
-  { label: 'Pre-order', href: '#preorder' },
   { label: 'Support', href: '#support' },
 ]
 
@@ -69,21 +68,13 @@ const Navbar: React.FC = () => {
             ))}
           </div>
 
-          {/* Right — locale + cart */}
-          <div
-            className={`hidden md:flex items-center gap-4 rounded-full px-4 py-2 transition-all duration-500 ${
-              scrolled ? 'bg-charcoal/85 backdrop-blur-sm' : 'bg-transparent'
-            }`}
-          >
-            <span className="font-mono text-[11px] text-cream/50 uppercase tracking-wider">EN-IN</span>
+          {/* Right — pre-order */}
+          <div className="hidden md:flex items-center">
             <a
               href="#preorder"
-              className="font-mono text-[11px] font-medium bg-rust text-charcoal px-4 py-1.5 rounded-full hover:bg-rust-light hover:scale-[1.04] active:scale-95 transition-all duration-300 uppercase tracking-wider flex items-center gap-2"
+              className="font-mono text-[11px] font-medium bg-rust text-charcoal px-5 py-2 rounded-full hover:bg-rust-light hover:scale-[1.04] active:scale-95 transition-all duration-300 uppercase tracking-wider"
             >
-              Cart
-              <span className="bg-charcoal/20 text-cream text-[9px] w-4 h-4 rounded-full flex items-center justify-center">
-                0
-              </span>
+              Pre-order
             </a>
           </div>
 

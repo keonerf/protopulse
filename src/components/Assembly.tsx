@@ -81,11 +81,11 @@ const Assembly: React.FC = () => {
                     return (
                       <li key={s.id} className="relative flex items-center gap-5 h-24">
                         <span
-                          className={`relative z-10 flex-shrink-0 grid place-items-center w-8 h-8 rounded-full border font-mono text-[10px] transition-all duration-500 ${
+                          className={`relative z-10 flex-shrink-0 grid place-items-center w-8 h-8 rounded-full border font-mono text-[10px] transition-all duration-500 bg-charcoal ${
                             active
                               ? 'bg-rust border-rust text-charcoal scale-110'
                               : done
-                                ? 'bg-rust/20 border-rust/50 text-rust-light'
+                                ? 'border-rust/50 text-rust-light'
                                 : 'bg-charcoal-lighter border-cream/15 text-cream/40'
                           }`}
                         >

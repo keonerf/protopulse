@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Explore Baker-01 — ProtoPulse</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<script src="./support.js"></script>
+<script>
+/* Scroll drives the film timeline: map scroll progress → seek time.
+   Seeking pauses the Stage's autoplay, so the build follows the scrollbar.
+   Driven by the scroll event (not a bare rAF poll) so it runs reliably.
+   Lives in <head> so the x-dc body re-render can't strip it. */
+(function () {
+  function filmSvg() { return document.querySelector('svg[data-om-exportable-video-with-duration-secs]'); }
+  var last = -1;
+  function apply() {
+    var svg = filmSvg();
+    if (!svg) return;
+    var max = document.body.scrollHeight - window.innerHeight;
+    var p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    var dur = parseFloat(svg.getAttribute('data-om-exportable-video-with-duration-secs')) || 90;
+    var t = p * (dur - 0.05);
+    if (Math.abs(t - last) > 0.006) {
+      svg.dispatchEvent(new CustomEvent('data-om-seek-to-time-frame', { detail: { time: t } }));
+      last = t;
+    }
+    var hint = document.getElementById('pp-hint');
+    if (hint) hint.style.opacity = p > 0.015 ? '0' : '1';
+    var bar = document.getElementById('pp-progress');
+    if (bar) bar.style.width = (p * 100).toFixed(1) + '%';
+  }
+  window.addEventListener('scroll', apply, { passive: true });
+  window.addEventListener('resize', apply);
+  /* wait for the film to mount, then park it at frame 0 */
+  var tries = 0;
+  (function initSeek() {
+    if (filmSvg()) { apply(); return; }
+    if (tries++ < 240) setTimeout(initSeek, 60);
+  })();
+})();
+</script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    html, body { margin: 0; padding: 0; background: #000; }
+    /* the film mounts position:fixed and stays pinned while this drives scroll range */
+    #pp-scrollspace { height: 640vh; pointer-events: none; }
+    #pp-hint {
+      position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%); z-index: 60;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 3px;
+      text-transform: uppercase; color: rgba(239,236,229,0.65); pointer-events: none;
+      transition: opacity .5s ease; white-space: nowrap;
+    }
+    #pp-progress {
+      position: fixed; left: 0; top: 0; height: 3px; width: 0%; z-index: 60;
+      background: #CF8F4E; pointer-events: none; transition: width .08s linear;
+    }
+  </style>
+</helmet>
+<x-import component-from-global-scope="ProtopulseFilm" from="./animations.jsx ./protopulse-film.jsx" accent="{{ accent }}" captions="{{ captions }}" hint-size="100%,100vh"></x-import>
+</x-dc>
+<div id="pp-scrollspace"></div>
+<div id="pp-progress"></div>
+<div id="pp-hint">Scroll to drive the build ↓</div>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: &quot;100%&quot;, &quot;height&quot;: &quot;100vh&quot; },
+  &quot;accent&quot;: { &quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#CF8F4E&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;#CF8F4E&quot;, &quot;#7FA6FF&quot;, &quot;#9BD4A0&quot;], &quot;section&quot;: &quot;Look&quot; },
+  &quot;captions&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Look&quot; }
+}"></script>
+</body>
+</html>

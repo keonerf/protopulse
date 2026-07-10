@@ -1172,12 +1172,12 @@ function Step8_Place() {
 
 /* ---------- exploded view ---------- */
 function ExplodedView({ g }) {
-  const L = ({ z, text, sub }) => {
+  const L = ({ z, text, sub, oy = 0 }) => {
     const a = P(560, 40, z);
     return (
       <div style={{ position: 'absolute', left: 0, top: 0 }}>
-        <div style={{ position: 'absolute', left: a[0] + 14, top: a[1], width: 120, height: 1, background: 'rgba(239,236,229,0.35)' }} />
-        <div style={{ position: 'absolute', left: a[0] + 148, top: a[1] - 22 }}>
+        <div style={{ position: 'absolute', left: a[0] + 14, top: a[1] + oy, width: 120, height: 1, background: 'rgba(239,236,229,0.35)' }} />
+        <div style={{ position: 'absolute', left: a[0] + 148, top: a[1] - 22 + oy }}>
           <div style={{ fontFamily: MONO, fontSize: 21, color: ACC, letterSpacing: 2, whiteSpace: 'nowrap' }}>{text}</div>
           <div style={{ fontFamily: FONT, fontSize: 21, color: MUT, whiteSpace: 'nowrap', marginTop: 4 }}>{sub}</div>
         </div>
@@ -1195,7 +1195,7 @@ function ExplodedView({ g }) {
     <IsoBox x={290} y={120} z={z + gap(1)} w={110} d={180} h={95} top="#4f6069" right="#405057" left="#344146" />
     <IsoBox x={425} y={120} z={z + gap(1)} w={110} d={180} h={95} top="#556052" right="#454f43" left="#384136" />
   </div>);
-  lv.push(<L key="vl" z={z + gap(1) + 52} text="VACUUM + SUPPLIES" sub="cyclone · dust bin · mask + paste cartridges" />);
+  lv.push(<L key="vl" z={z + gap(1) + 52} oy={14} text="VACUUM + SUPPLIES" sub="cyclone · dust bin · mask + paste cartridges" />);
   z += 105;
   lv.push(<div key="b" style={{ position: 'absolute' }}>
     <IsoBox x={40} y={50} z={z + gap(2)} w={350} d={320} h={28} top="#5f5d57" right="#4b4943" left="#3e3c37" />
@@ -1206,9 +1206,9 @@ function ExplodedView({ g }) {
     <IsoBox x={445} y={153} z={z + gap(2) + 28} w={64} d={64} h={26} top="#8fd8de" right="#5fb3bc" left="#4d99a2" />
     <IsoBox x={408} y={255} z={z + gap(2)} w={148} d={130} h={88} top="#eceae5" right="#dbd8d1" left="#c2bfb8" />
   </div>);
-  lv.push(<L key="bl" z={z + gap(2) + 5} text="FIXED BED" sub="board shuttles on rails" />);
-  lv.push(<L key="ol" z={z + gap(2) + 58} text="REFLOW OVEN" sub="SAC305 profile · sealed port" />);
-  lv.push(<L key="pl" z={z + gap(2) + 105} text="3D PRINTER BAY" sub="molds & jigs, printed in parallel" />);
+  lv.push(<L key="bl" z={z + gap(2) + 5} oy={52} text="FIXED BED" sub="board shuttles on rails" />);
+  lv.push(<L key="ol" z={z + gap(2) + 58} oy={-18} text="REFLOW OVEN" sub="SAC305 profile · sealed port" />);
+  lv.push(<L key="pl" z={z + gap(2) + 105} oy={-92} text="3D PRINTER BAY" sub="molds & jigs, printed in parallel" />);
   z += 60;
   const gz = z + gap(3);
   lv.push(<div key="g" style={{ position: 'absolute' }}>

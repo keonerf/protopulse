@@ -33,9 +33,9 @@ const MachinesKits: React.FC = () => {
             className="group glass-card w-full text-left p-7 lg:p-9 grid md:grid-cols-2 gap-8 items-center mb-5"
             aria-label="Open the interactive Baker-01 model"
           >
-            <div className="relative min-h-[260px] rounded-xl bg-charcoal/60 overflow-hidden">
+            <div className="relative min-h-[390px] rounded-xl bg-charcoal/60 overflow-hidden">
               <img
-                src="/assets/renders/baker-assembled.png"
+                src="/assets/renders/baker-intermediate.png"
                 alt="Baker-01 desktop PCB fabrication station"
                 className="absolute inset-0 w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-[1.04]"
               />
@@ -96,18 +96,14 @@ const MachinesKits: React.FC = () => {
 
           {/* Bakers Studio software — same card format as the demo */}
           <ScrollReveal delay={0.2}>
-            <a
-              href="/downloads/BakersStudio-v1.0.0-Win64.zip"
-              download
-              className="group glass-card h-full p-6 lg:p-7 flex flex-col"
-            >
+            <a href="#software" className="group glass-card h-full p-6 lg:p-7 flex flex-col">
               <span className="font-mono text-[10px] text-rust uppercase tracking-[0.28em] mb-4">Included · Free</span>
               <h3 className="font-heading text-xl font-bold text-cream mb-2">Bakers Studio</h3>
               <p className="font-body text-sm text-cream-muted leading-relaxed">
                 Drop a Gerber + BOM, preview the toolpath, and queue the whole line from one canvas.
               </p>
               <div className="mt-auto pt-6 font-mono text-[10px] text-rust-light uppercase tracking-wider group-hover:text-rust transition-colors">
-                Download for Windows →
+                Learn more →
               </div>
             </a>
           </ScrollReveal>

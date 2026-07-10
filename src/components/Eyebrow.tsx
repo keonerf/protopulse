@@ -7,11 +7,9 @@ const Eyebrow: React.FC<{
   align?: 'center' | 'left'
   tone?: 'rust' | 'cream'
 }> = ({ label, align = 'center', tone = 'rust' }) => {
-  const rule = tone === 'cream' ? 'bg-cream/50' : 'bg-rust'
   const lbl = tone === 'cream' ? 'text-cream/80' : 'text-rust'
   return (
-    <div className={`flex items-center gap-3 mb-5 ${align === 'center' ? 'justify-center' : ''}`}>
-      <span className={`h-px w-6 ${rule}`} />
+    <div className={`flex items-center mb-5 ${align === 'center' ? 'justify-center' : ''}`}>
       <span className={`font-mono text-[11px] uppercase tracking-[0.28em] ${lbl}`}>{label}</span>
     </div>
   )
